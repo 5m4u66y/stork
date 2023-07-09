@@ -224,7 +224,7 @@ func (sm *appMonitor) detectApps(storkAgent *StorkAgent) {
 				AccessPoints: accessPoints,
 			},
 			HTTPClient:        httpClient,
-			ConfiguredDaemons: config.GetControlSockets().GetConfiguredDaemonNames()
+			ConfiguredDaemons: config.GetControlSockets().GetConfiguredDaemonNames(),
 		}
 	}
 	processes, _ := process.Processes()
