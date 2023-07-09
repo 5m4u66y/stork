@@ -68,7 +68,7 @@ func runAgent(settings *cli.Context, reload bool) error {
 	}
 
 	// Start app monitor
-	appMonitor := agent.NewAppMonitor()
+	appMonitor := agent.NewAppMonitor(settings)
 
 	// Prepare agent gRPC handler
 	storkAgent := agent.NewStorkAgent(settings, appMonitor, hookManager)
@@ -282,6 +282,19 @@ func setupApp(reload bool) *cli.App {
 				Usage:   "Logging level can be specified using env variable only. Allowed values: are DEBUG, INFO, WARN, ERROR",
 				Value:   "INFO",
 				EnvVars: []string{"STORK_LOG_LEVEL"},
+			},
+			// Kea agent related settings
+			&cli.StringFlag{
+				Name:    "kea-agent-host",
+				Value:   "127.0.0.1",
+				Usage:   "The IP or hostname of the Kea agent that this Stork Agent should monitors",
+				EnvVars: []string{"KEA_AGENT_HOST"},
+			},
+			&cli.IntFlag{
+				Name:    "kea-agent-port",
+				Value:   8000,
+				Usage:   "The TCP port of the Kea agent that this Stork Agent should monitors",
+				EnvVars: []string{"KEA_AGENT_PORT"},
 			},
 		},
 		Before: func(c *cli.Context) error {

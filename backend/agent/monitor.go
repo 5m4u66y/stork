@@ -64,6 +64,7 @@ type AppMonitor interface {
 }
 
 type appMonitor struct {
+	Settings *cli.Context
 	requests chan chan []App // input to app monitor, ie. channel for receiving requests
 	quit     chan bool       // channel for stopping app monitor
 	running  bool
@@ -80,8 +81,9 @@ const (
 
 // Creates an AppMonitor instance. It used to start it as well, but this is now done
 // by a dedicated method Start(). Make sure you call Start() before using app monitor.
-func NewAppMonitor() AppMonitor {
+func NewAppMonitor(settings *cli.Context) AppMonitor {
 	sm := &appMonitor{
+		Settings: settings,
 		requests: make(chan chan []App),
 		quit:     make(chan bool),
 		wg:       &sync.WaitGroup{},
@@ -207,6 +209,24 @@ func (sm *appMonitor) detectApps(storkAgent *StorkAgent) {
 
 	var apps []App
 
+	if sm.Settings.String("kea-agent-host") {
+		accessPoints := []AccessPoint{
+			{
+				Type:              AccessPointControl,
+				Address:           sm.Settings.String("kea-agent-host"),
+				Port:              sm.Settings.Int("kea-agent-port"),
+				UseSecureProtocol: config.UseSecureProtocol(),
+			},
+		}
+		keaApp := &KeaApp{
+			BaseApp: BaseApp{
+				Type:         AppTypeKea,
+				AccessPoints: accessPoints,
+			},
+			HTTPClient:        httpClient,
+			ConfiguredDaemons: config.GetControlSockets().GetConfiguredDaemonNames()
+		}
+	}
 	processes, _ := process.Processes()
 	for _, p := range processes {
 		procName, _ := p.Name()

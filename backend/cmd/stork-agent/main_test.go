@@ -32,7 +32,7 @@ func getExpectedSwitches() []string {
 		"--host", "--port", "--prometheus-kea-exporter-address", "--prometheus-kea-exporter-port",
 		"--prometheus-kea-exporter-interval", "--prometheus-bind9-exporter-address",
 		"--prometheus-bind9-exporter-port", "--prometheus-bind9-exporter-interval",
-		"--env-file", "--use-env-file", "--hook-directory",
+		"--env-file", "--use-env-file", "--hook-directory", "--kea-agent-host", "--kea-agent-port"
 	}
 }
 
